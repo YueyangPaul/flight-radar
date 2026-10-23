@@ -1,0 +1,195 @@
+{
+ "updated_at": "2026-10-24T01:08:49+08:00",
+ "updated_by": "scan",
+ "cities": [
+  {
+   "name": "昆明",
+   "code": "KMG",
+   "intl": false,
+   "proxy": "",
+   "cold_zero": 1100,
+   "cold_one": 900,
+   "active": true
+  },
+  {
+   "name": "芒市",
+   "code": "LUM",
+   "intl": false,
+   "proxy": "",
+   "cold_zero": 1400,
+   "cold_one": 1100,
+   "active": true
+  },
+  {
+   "name": "上海",
+   "code": "SHA",
+   "intl": false,
+   "proxy": "",
+   "cold_zero": 900,
+   "cold_one": 700,
+   "active": true
+  },
+  {
+   "name": "厦门",
+   "code": "XMN",
+   "intl": false,
+   "proxy": "",
+   "cold_zero": 950,
+   "cold_one": 750,
+   "active": true
+  },
+  {
+   "name": "惠州",
+   "code": "SZX",
+   "intl": false,
+   "proxy": "经深圳",
+   "cold_zero": 1100,
+   "cold_one": 900,
+   "active": true
+  },
+  {
+   "name": "万宁",
+   "code": "HAK",
+   "intl": false,
+   "proxy": "经海口",
+   "cold_zero": 1150,
+   "cold_one": 900,
+   "active": true
+  },
+  {
+   "name": "三亚",
+   "code": "SYX",
+   "intl": false,
+   "proxy": "",
+   "cold_zero": 1250,
+   "cold_one": 1000,
+   "active": true
+  },
+  {
+   "name": "大理",
+   "code": "DLU",
+   "intl": false,
+   "proxy": "",
+   "cold_zero": 1400,
+   "cold_one": 1100,
+   "active": true
+  },
+  {
+   "name": "重庆",
+   "code": "CKG",
+   "intl": false,
+   "proxy": "",
+   "cold_zero": 950,
+   "cold_one": 750,
+   "active": true
+  },
+  {
+   "name": "长沙",
+   "code": "CSX",
+   "intl": false,
+   "proxy": "",
+   "cold_zero": 850,
+   "cold_one": 650,
+   "active": true
+  },
+  {
+   "name": "保山",
+   "code": "BSD",
+   "intl": false,
+   "proxy": "",
+   "cold_zero": 1500,
+   "cold_one": 1150,
+   "active": true
+  },
+  {
+   "name": "西双版纳",
+   "code": "JHG",
+   "intl": false,
+   "proxy": "",
+   "cold_zero": 1300,
+   "cold_one": 1000,
+   "active": true
+  },
+  {
+   "name": "杭州",
+   "code": "HGH",
+   "intl": false,
+   "proxy": "",
+   "cold_zero": 850,
+   "cold_one": 650,
+   "active": true
+  },
+  {
+   "name": "越南（任意城市）",
+   "code": "HAN",
+   "intl": true,
+   "proxy": "",
+   "cold_zero": 1800,
+   "cold_one": 1300,
+   "active": false
+  },
+  {
+   "name": "泰国（任意城市）",
+   "code": "BKK",
+   "intl": true,
+   "proxy": "",
+   "cold_zero": 2000,
+   "cold_one": 1500,
+   "active": false
+  },
+  {
+   "name": "东京",
+   "code": "TYO",
+   "intl": true,
+   "proxy": "",
+   "cold_zero": 2500,
+   "cold_one": 2000,
+   "active": true
+  },
+  {
+   "name": "大阪",
+   "code": "OSA",
+   "intl": true,
+   "proxy": "",
+   "cold_zero": 2500,
+   "cold_one": 2000,
+   "active": true
+  },
+  {
+   "name": "首尔",
+   "code": "SEL",
+   "intl": true,
+   "proxy": "",
+   "cold_zero": 1500,
+   "cold_one": 1200,
+   "active": true
+  },
+  {
+   "name": "釜山",
+   "code": "PUS",
+   "intl": true,
+   "proxy": "",
+   "cold_zero": 1700,
+   "cold_one": 1400,
+   "active": true
+  },
+  {
+   "name": "济州",
+   "code": "CJU",
+   "intl": true,
+   "proxy": "",
+   "cold_zero": 1100,
+   "cold_one": 900,
+   "active": true
+  },
+  {
+   "name": "海参崴",
+   "code": "VVO",
+   "intl": true,
+   "proxy": "",
+   "cold_zero": 1300,
+   "cold_one": 1000,
+   "active": true
+  }
+ ]
+}
