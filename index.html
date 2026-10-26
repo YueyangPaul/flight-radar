@@ -245,7 +245,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   <footer class="notes">
     <div><h3>零请假怎么算</h3><p>去程须周五首都机场 21:15 及以后、大兴 22:00 及以后起飞，或周六出发；更早的周五航班一律算请一天假。返程 22:30 前落地正常，22:31 到次日 00:30 降一级，更晚的排除。请一天假的组合还要比同周末零请假组合便宜（国内 ≥200 元、国际 ≥500 元，且都 ≥20%）才算低于阈值。</p></div>
     <div><h3>价格是什么价</h3><p>国内用携程列表页的「往返总价起」再加机建燃油约 280 元推算，国际直接用「往返含税价起」。都是列表页起价，没有进订单页核验，下单前以携程实际价格为准。热力图是低价日历接口的周五去程 + 周日回程单程最低价相加，不看起飞时刻，只用来挑要精查的周末。</p></div>
-    <div><h3>阈值和城市</h3><p>每个目的地按提前期分三档（0–60、61–180、181–365 天），用最近 60 天日历样本算收缩后的 P20，样本不够时用冷启动阈值。新加的城市先用默认阈值，几天后自动换成动态阈值。城市列表改动在下一次每晚扫描（约 22:00）时生效。</p></div>
+    <div><h3>阈值和城市</h3><p>每个目的地按提前期分三档（0–60、61–180、181–365 天），用最近 60 天日历样本算收缩后的 P20，样本不够时用冷启动阈值；每天只往新值挪 20%，避免一天一个样。具体某个周末的阈值按提前期在三档之间平滑过渡，不会跨档突变。往返超过 2500 元一律不算低价。新加的城市先用默认阈值，几天后自动换成动态阈值。城市列表改动在下一次每晚扫描（约 22:00）时生效。</p></div>
   </footer>
 </div>
 
@@ -386,14 +386,21 @@ function defaultInfo(){
   (sel === "全部" ? D.dests : [DEST[sel]]).forEach(d => (D.heat[d.name] || []).forEach((v, i) => { if (v && (!best || v[1] < best[2])) best = [d.name, i, v[1]]; }));
   if (best) info(best[0], best[1], true); else $("heat-info").innerHTML = `<span>这次日历接口没有返回价格（缓存缺口，不代表没航班）。</span>`;
 }
+// 阈值按提前期在三档锚点之间线性插值（与 scripts/threshold_curve.py 同口径）
+function thrAt(T, lead, k){
+  const A = D.anchors || [30, 120, 273], Y = ["0_60", "61_180", "181_365"].map(b => T[b][k]);
+  if (lead <= A[0]) return Y[0];
+  for (let i = 1; i < A.length; i++) if (lead <= A[i]) return Math.round(Y[i-1] + (Y[i] - Y[i-1]) * (lead - A[i-1]) / (A[i] - A[i-1]));
+  return Y[A.length - 1];
+}
 function info(d, i, isDefault){
   const v = D.heat[d][i], w = D.weeks[i], ret = addDays(w, 2);
   const lead = Math.round((day(w) - day(D.cal_at.slice(0, 10))) / 864e5);
-  const b = lead <= 60 ? "0_60" : lead <= 180 ? "61_180" : "181_365", t = DEST[d].thr[b];
+  const t = {z: thrAt(DEST[d].thr, lead, "z")};
   const sc = D.listing.find(c => c.d === d && c.dep === w);
   $("heat-info").innerHTML = `${isDefault ? `<span class="muted">日历最低：</span>` : ""}<span class="k">${esc(d)} ${md(w)} 周五 → ${md(ret)} 周日</span>` +
     `<span class="mono">${yuan(v[0])}${v.length > 2 ? `（去 ${v[2]} + 回 ${v[3]}）` : ""}</span>` +
-    `<span>零请假阈值 <span class="mono">${t.z}</span>（${BK[b]}）· ${Math.round(v[1] * 100)}%</span>` +
+    `<span>零请假阈值 <span class="mono">${t.z}</span>（提前 ${lead} 天）· ${Math.round(v[1] * 100)}%</span>` +
     (sc ? `<span>已精查：${sc.zero ? `零请假 ${esc(sc.zero.time)} 起飞 <span class="mono">≈${yuan(sc.zero.est)}</span>` : "没有零请假去程"}${sc.one ? ` · 需请假 ${esc(sc.one.time)} <span class="mono">≈${yuan(sc.one.est)}</span>` : ""}</span>` : `<span class="muted">还没精查</span>`);
 }
 function renderLegend(){
