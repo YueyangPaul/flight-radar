@@ -177,10 +177,23 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   .panel{padding:14px;border-radius:16px}
   .board{border-radius:16px}
 }
+#concert { margin-bottom: 24px; }
+#concert .concert-table { overflow-x: auto; }
+#concert table { width: 100%; border-collapse: collapse; font-size: 14px; }
+#concert th, #concert td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+#concert th { white-space: nowrap; }
+#concert p { color: var(--muted); font-size: 13px; }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <section class="sec panel" id="concert" aria-labelledby="concert-h" hidden>
+    <div class="sec-h"><h2 id="concert-h">1 月 22 日 · 北京出发去启德体育场</h2><p>周五 19:30 开演 · 目标 18:00 到场</p></div>
+    <p id="concert-summary"></p>
+    <div class="concert-table"><table><thead><tr><th scope="col">路线</th><th scope="col">所见航班</th><th scope="col">机票起价</th><th scope="col">单程交通预算</th><th scope="col">预计到场 / 门到门</th></tr></thead><tbody id="concert-rows"></tbody></table></div>
+    <p id="concert-note"></p>
+    <p><a href="https://member.kaitaksportspark.com.hk/getting-here">场馆交通</a> · <a href="https://www.highspeed.mtr.com.hk/sc/main/buy-ticket.html">跨境高铁购票</a> · <a href="https://www.hzmb.gov.hk/en/cross-boundary.html">港珠澳大桥交通</a></p>
+  </section>
   <header class="top">
     <div class="eyebrow"><span class="pill">携程 · 每晚扫描</span><span>北京出发 · 周五去周日回</span><span class="num" id="gen"></span></div>
     <h1>北京周末 <em>48h</em> 机票雷达</h1>
@@ -274,7 +287,31 @@ let D = null, CITIES = null, citiesSha = null;
 let mode = store.get("radar-mode") || "hit", sort = store.get("radar-sort") || "date", sel = store.get("radar-dest") || "全部", cellSel = null;
 let DEST = {}, scanned = new Set();
 
+async function renderConcert() {
+  if (new Date() >= new Date("2027-01-22T19:30:00+08:00")) return;
+  try {
+    const response = await fetch("concert-20270122.json", {cache: "no-store"});
+    if (!response.ok) return;
+    const report = await response.json();
+    $("concert-summary").textContent = report.updated + " 北京时间 · " + report.summary;
+    $("concert-note").textContent = report.note;
+    $("concert-rows").replaceChildren(...report.rows.map(row => {
+      const tr = document.createElement("tr");
+      const link = document.createElement("a");
+      link.href = "https://flights.ctrip.com/online/list/oneway-bjs-" + row.code.toLowerCase() + "?depdate=2027-01-22&cabin=y_s_c_f&adult=1&child=0&infant=0";
+      link.textContent = row.route;
+      tr.insertCell().append(link);
+      for (const value of [row.flight, row.fare, row.total, row.arrival]) tr.insertCell().textContent = value;
+      return tr;
+    }));
+    $("concert").hidden = false;
+  } catch (error) {
+    console.warn("Hong Kong trip report unavailable", error);
+  }
+}
+
 async function boot(){
+  void renderConcert();
   try {
     const [d, c] = await Promise.all([fetch("data.json?t=" + Date.now()).then(r => r.json()), fetch("cities.json?t=" + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null)]);
     D = d; CITIES = c;
