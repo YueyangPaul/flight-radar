@@ -192,7 +192,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     <p id="concert-summary"></p>
     <div class="concert-table"><table><thead><tr><th scope="col">路线</th><th scope="col">所见航班</th><th scope="col">机票起价</th><th scope="col">单程交通预算</th><th scope="col">预计到场 / 门到门</th></tr></thead><tbody id="concert-rows"></tbody></table></div>
     <p id="concert-note"></p>
-    <p><a href="https://member.kaitaksportspark.com.hk/getting-here">场馆交通</a> · <a href="https://www.highspeed.mtr.com.hk/sc/main/buy-ticket.html">跨境高铁购票</a> · <a href="https://www.hzmb.gov.hk/en/cross-boundary.html">港珠澳大桥交通</a></p>
+    <p><a href="https://member.kaitaksportspark.com.hk/getting-here">场馆交通</a> · <a href="https://www.highspeed.mtr.com.hk/sc/main/buy-ticket.html">跨境高铁购票</a> · <a href="https://www.highspeed.mtr.com.hk/res/pdf/rmb-published-fare-chart.pdf">高铁票价表</a> · <a href="https://i.hzmbus.com/info/customer/fare.html">金巴票价</a></p>
   </section>
   <header class="top">
     <div class="eyebrow"><span class="pill">携程 · 每晚扫描</span><span>北京出发 · 周五去周日回</span><span class="num" id="gen"></span></div>
@@ -295,13 +295,27 @@ async function renderConcert() {
     const report = await response.json();
     $("concert-summary").textContent = report.updated + " 北京时间 · " + report.summary;
     $("concert-note").textContent = report.note;
-    $("concert-rows").replaceChildren(...report.rows.map(row => {
+    $("concert-rows").replaceChildren(...report.rows.map((row, index) => {
       const tr = document.createElement("tr");
       const link = document.createElement("a");
       link.href = "https://flights.ctrip.com/online/list/oneway-bjs-" + row.code.toLowerCase() + "?depdate=2027-01-22&cabin=y_s_c_f&adult=1&child=0&infant=0";
-      link.textContent = row.route;
-      tr.insertCell().append(link);
-      for (const value of [row.flight, row.fare, row.total, row.arrival]) tr.insertCell().textContent = value;
+      link.textContent = (index + 1) + ". " + row.route;
+      const route = tr.insertCell();
+      route.append(link);
+      if (row.reason) {
+        const reason = document.createElement("p");
+        reason.textContent = row.reason;
+        route.append(reason);
+      }
+      for (const value of [row.flight, row.fare]) tr.insertCell().textContent = value;
+      const cost = tr.insertCell();
+      cost.textContent = row.total;
+      if (row.breakdown) {
+        const detail = document.createElement("p");
+        detail.textContent = row.breakdown;
+        cost.append(detail);
+      }
+      tr.insertCell().textContent = row.arrival;
       return tr;
     }));
     $("concert").hidden = false;
